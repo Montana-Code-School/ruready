@@ -9,7 +9,10 @@ class App extends Component {
     super(props)
     this.state ={
       task: '',
-      users: {}
+      users: {},
+      ready: false,
+      username: '',
+      newTask: ''
     }
   }
 
@@ -20,6 +23,9 @@ class App extends Component {
       .then((response) => {
         return response.json()
       }).then((json) => {
+        if(this.state.username){
+          json.ready = json.users[this.state.username] === 'Ready'
+        }
         this.setState(json)
       }).catch((ex) => {
         console.log('parsing failed', ex)
@@ -27,18 +33,35 @@ class App extends Component {
     }, 1000)
   }
 
+  changeReady(){
+    fetch('/setStatus/' +this.state.username + '/' + (this.state.ready ? 'Not Ready': 'Ready'))
+  }
+
+  reset(){
+    fetch('/reset/' + this.state.newTask)
+  }
+
   render() {
+    const { users, username, ready, newTask } = this.state
+    const numReady = Object.values(users).filter(val => val === 'Ready').length
+    const numUsers = Object.keys(users).length;
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h3>Hello, my name is...</h3>
+          <input value={username} onChange={(e)=>this.setState({username: e.target.value})}/>
         </div>
         <p className="App-intro">
-        <h1>Task</h1>
+        <button onClick={this.changeReady.bind(this)}>{ready ? "Not Ready" : "Ready"}</button>
+        <h1>Task  {numReady}/{numUsers}</h1>
+        
+
         <h2>{this.state.task}</h2>
+        <input value={newTask} onChange={(e)=>this.setState({newTask: e.target.value})}/>
+        <button onClick={this.reset.bind(this)}> Reset </button>
         <div>
-          {Object.keys(this.state.users).map(user => <div>{user}: {this.state.users[user]} </div>)}
+          {Object.keys(this.state.users).map(user => <div style={{color: users[user] === 'Ready' ? 'green' : 'red'}}>{user}: {users[user]} </div>)}
         </div>
 
         </p>

@@ -1,9 +1,9 @@
 const express = require('express')
 
 const users = {
-	cian: 'ready',
-	kelsey: 'ready',
-	tim: 'not ready'
+	cian: 'Ready',
+	kelsey: 'Ready',
+	tim: 'Not Ready'
 }
 
 let task = ""
