@@ -5,9 +5,12 @@
   "devDependencies": {
     "react-scripts": "1.0.7"
   },
+  "proxy": "http://192.168.137.107:3001/",
   "dependencies": {
+    "express": "^4.15.3",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
