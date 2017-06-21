@@ -1,17 +1,18 @@
-const express = require('express')
-
-const users = {
-	cian: 'Ready',
-	kelsey: 'Ready',
-	tim: 'Not Ready'
-}
+const express = require('express');
+const User = require('./UserModel');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/ruready');
 
 let task = ""
 
 const app = express()
+const users = {}
 
 app.get('/status', (req, res) => {
-	res.json({task, users})
+	User.find({$or : [{status: 'Ready'}, {status: 'Not Ready'}]}, (err, users) =>{
+		res.json({task, users})
+	})
+	
 })
 
 app.get('/test',(req, res) => {
@@ -27,8 +28,13 @@ app.get('/reset/:newTask', (req, res) => {
 })
 
 app.get('/setStatus/:user/:status', (req, res) => {
-	users[req.params.user] = req.params.status;
-	res.json(users)
+	const {user, status} = req.params
+	User.findOneAndUpdate({name: user}, 
+		                  {name: user, status: status}, 
+		                  {upsert: true},
+		                  (err, result) => res.json(result) )
+	// const userObj = new User({name: user, status: status})
+	// userObj.save((err, result) => res.json(result))
 })
 
 app.get('/removeStatus/:user', (req, res) => {

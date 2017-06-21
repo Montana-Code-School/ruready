@@ -23,10 +23,16 @@ class App extends Component {
       .then((response) => {
         return response.json()
       }).then((json) => {
+        
+        const userObj = json.users.reduce((acc, user) => {
+          acc[user.name] = user.status;
+          return acc;
+        }, {})
+        let ready = false
         if(this.state.username){
-          json.ready = json.users[this.state.username] === 'Ready'
+          ready = userObj[this.state.username] === 'Ready'
         }
-        this.setState(json)
+        this.setState({users: userObj, ready: ready})
       }).catch((ex) => {
         console.log('parsing failed', ex)
       })
@@ -55,7 +61,6 @@ class App extends Component {
         <p className="App-intro">
         <button onClick={this.changeReady.bind(this)}>{ready ? "Not Ready" : "Ready"}</button>
         <h1>Task  {numReady}/{numUsers}</h1>
-        
 
         <h2>{this.state.task}</h2>
         <input value={newTask} onChange={(e)=>this.setState({newTask: e.target.value})}/>
